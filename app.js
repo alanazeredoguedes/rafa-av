@@ -3,6 +3,7 @@
 /** ================================================================== */
 const FileHelper = require('./src/classes/FileHelper')
 const liwc = require('./src/lib/liwc.js');
+const {js} = require("blade/lib/filters");
 //const googleTranslate = require('google-translate')(apiKey, options);
 
 /** ================================================================== */
@@ -14,20 +15,129 @@ let file_helper = new FileHelper()
 /** ============================ Run Code ============================ */
 /** ================================================================== */
 
-let frase = file_helper.get_file('frases/frase.txt')
-console.log(frase)
+let info = liwc.fromText("anxious");
 
-while (frase.includes('\n')){
-    frase = frase.replace('\n',' ');
+let feelings = [];
+for (let i in info) {
+    if (info[i] === 1) {
+        feelings.push(i);
+    }
 }
 
-while (frase.includes(',')){
-    frase = frase.replace(',',' ');
+console.log(info)
+console.log(feelings)
+
+
+
+/*
+let dicionario = file_helper.get_file('translate/dicionario_br.json')
+dicionario = JSON.parse(dicionario);
+
+console.log(dicionario)
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+let referencia = file_helper.get_file('translate/dicionario_pt_br.txt')
+
+//console.log(referencia)
+
+while (referencia.includes('\n')){
+    referencia = referencia.replace('\n',' ');
 }
 
-let fraseArray = frase.split(' ')
+let referenciaArray = referencia.split(' ')
+referenciaArray.pop()
 
-console.log(fraseArray)
+let json_arr = {};
+
+referenciaArray.forEach(function (data){
+    data = data.split('\t')
+    let values = []
+    data.forEach(function (valores,index){
+        if(index !== 0){
+            values.push(valores)
+        }
+    })
+    json_arr[data[0]] = values;
+});
+
+//json_arr.pop()
+
+let json_string = JSON.stringify(json_arr);
+
+//console.log(json_string)
+
+file_helper.put_file('translate/dicionario_br.json', json_string)
+*/
+
+//
+//
+// let json_arr = {};
+
+// referenciaArray.forEach(function (data){
+//     data = data.split('\t')
+//     json_arr[data[0]] = data[1];
+// });
+//
+// let json_string = JSON.stringify(json_arr);
+//
+// console.log(json_string)
+
+//file_helper.put_file('translate/.json', json_string)
+
+//
+// referencia_dados.pop()
+//
+// var json_arr = {};
+// json_arr[] = referencia_dados
+//
+// let myJsonString = JSON.parse(referencia_dados)
+//
+//
+// console.log(myJsonString)
+//
+//
+// file_helper.put_file('translate/referencia.json', myJsonString)
+
+
+//console.log(referenciaArray).split('\t')
+
+
+
+
+// let frase = file_helper.get_file('frases/frase.txt')
+// console.log(frase)
+//
+// while (frase.includes('\n')){
+//     frase = frase.replace('\n',' ');
+// }
+//
+// while (frase.includes(',')){
+//     frase = frase.replace(',',' ');
+// }
+//
+// let fraseArray = frase.split(' ')
+//
+// console.log(fraseArray)
 
 
 /*let fraseArray = frase.split(' ')

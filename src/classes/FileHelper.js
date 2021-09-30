@@ -14,4 +14,12 @@ module.exports = class FileHelper {
         }
     }
 
+    put_file(file_name, data){
+        try {
+            return fs.writeFileSync(this.template_dir + file_name, data,)
+        } catch (err) {
+            console.error(err)
+        }
+    }
+
 }
