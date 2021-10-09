@@ -30,6 +30,7 @@ let frase = file_helper.get_file('frases/frase.txt')
 let fraseArray = filter_frase(frase)
 
 let resposta = {
+    numWords: fraseArray.length,
     swear: 0,
     anx: 0,
     posemo: 0,

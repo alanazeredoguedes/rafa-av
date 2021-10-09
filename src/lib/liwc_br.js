@@ -12,7 +12,8 @@ function busca_individual(busca){
     let data = []
 
     for (let key in idioma) {
-        if(tratar_caracteres_especiais(key) === busca){
+        let key_tratada = tratar_caracteres_especiais(key)
+        if(key_tratada === busca ){
             //console.log(key)
             data = idioma[key]
         }
