@@ -3,7 +3,7 @@ const liwcFunctions = require('./funcs')
 const fs = require('fs');
 
 // Le o arquivo com o texto a ser analisado
-let loadFile = fs.readFileSync('src/frases/frase.txt', 'utf-8')
+let loadFile = fs.readFileSync('../frases/frase.txt', 'utf-8')
 
 // Separa cada palavra do texto
 let palavrasSeparadas = liwcFunctions.separarPalavras(loadFile)

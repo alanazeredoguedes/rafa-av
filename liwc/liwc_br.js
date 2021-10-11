@@ -1,7 +1,7 @@
 const fs = require('fs');
 
-let referenciaPath = './src/lib/translate/referencia.json'
-let idiomaPath = './src/lib/translate/dicionario_br.json'
+let referenciaPath = '../liwc/translate/referencia.json'
+let idiomaPath = '../liwc/translate/dicionario_br.json'
 
 const referencia = JSON.parse( fs.readFileSync( referenciaPath, 'utf8') );
 

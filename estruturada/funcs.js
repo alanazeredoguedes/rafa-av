@@ -1,4 +1,4 @@
-const liwc_br = require('../liwc_br.js')
+const liwc_br = require('../liwc/liwc_br.js')
 
 module.exports = {
 
@@ -93,7 +93,7 @@ module.exports = {
 
         for (let i = 0; i < texto.length; i++) {
             const analisePalavra = this.calcularTokensPalavra(texto[i])
-            
+
             if(analisePalavra.anx) objetoRetorno.anx++
             if(analisePalavra.swear) objetoRetorno.swear++
             if(analisePalavra.posemo) objetoRetorno.posemo++
