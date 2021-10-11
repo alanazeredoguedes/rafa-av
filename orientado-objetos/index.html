@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+    <title>Análise De Textos</title>
+</head>
+<body>
+
+<div class="container">
+    <br><br>
+    <div class="text-center">
+        <h1 >Análise De Textos </h1>
+    </div>
+
+    <div class="mb-3">
+        <label for="texto" class="form-label">Informe um texto a ser processado:</label>
+        <textarea class="form-control" id="texto" name="texto" rows="10" >...</textarea>
+
+    </div>
+
+    <button type="button" class="btn btn-warning" id="textoTarefa">Texto Tarefa</button>
+    <button type="button" class="btn btn-primary" onclick="run()" >Processar Texto</button>
+
+    <br><br>
+
+    <ul class="list-group" id="resposta" style="display: none">
+        <h3>Resposta:</h3>
+        <li class="list-group-item">
+            Total Palavras:
+            <span id="totalPalavras"></span>
+        </li>
+
+        <li class="list-group-item">
+            Palavras Ofensivas:
+            <span id="ofensivo"></span>
+        </li>
+
+        <li class="list-group-item">
+            Palavras de Ansiedade:
+            <span id="ansidade"></span>
+        </li>
+
+        <li class="list-group-item">
+            Tom Geral Negativo do Texto:
+            <span id="tomNegativo"></span>
+        </li>
+
+        <li class="list-group-item">
+            Tom Geral Positivo do Texto:
+            <span id="tomPositivo"></span>
+        </li>
+    </ul>
+
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="processando" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Processando Informações</h5>
+            </div>
+            <div class="modal-body text-center">
+                Estamos Processando as Informações.
+                <br>
+                Aguarde um Momento!
+                <br><br>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Optional JavaScript; choose one of the two! -->
+
+<!-- Option 1: Bootstrap Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+<!-- Option 2: Separate Popper and Bootstrap JS -->
+<!--
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+-->
+
+<!--<script src="index.js"></script>-->
+<script>
+
+    let referenciaPath = document.URL+'../liwc/translate/referencia.json'
+    let idiomaPath = document.URL+'../liwc/translate/dicionario_br.json'
+
+    let referencia, idioma
+
+    $.ajax({
+        type: "GET",
+        url: referenciaPath,
+        async: false,
+        success : function(data) {
+            referencia = data
+        }
+    });
+
+    $.ajax({
+        type: "GET",
+        url: idiomaPath,
+        async: false,
+        success : function(data) {
+            idioma = data
+        }
+    });
+
+    function busca_individual(busca){
+
+        let data = []
+
+        for (let key in idioma) {
+            let key_tratada = tratar_caracteres_especiais(key)
+            if(key_tratada === busca ){
+                //console.log(key)
+                data = idioma[key]
+            }
+        }
+
+        let sentimentos = []
+
+        if(data){
+            data.forEach((element) => {
+                sentimentos.push(referencia[element])
+                //sentimentos.push(referencia[element+'*'])
+            });
+        }
+
+        return sentimentos
+    }
+
+    function tratar_caracteres_especiais(palavra){
+
+        return  palavra.normalize('NFD').replace(/([\u0300-\u036f]|[^0-9a-zA-Z])/g, '')
+
+    }
+
+
+    /** Classe que limpa e tokeniza a string */
+    class StringReader {
+
+        constructor(text) {
+            this._text = text;
+            this._tokens = [];
+            this.clearString()
+        }
+
+        get tokens() {
+            return this._tokens;
+        }
+
+        set tokens(value) {
+            this._tokens.push(value);
+        }
+
+        get text() {
+            return this._text;
+        }
+
+        set text(value) {
+            this._text = value;
+        }
+
+        clearString(){
+            let frase = this._text;
+
+            while(frase.includes('\n')){
+                frase = frase.replace('\n',' ');
+            }
+
+            while (frase.includes(',')){
+                frase = frase.replace(',',' ');
+            }
+
+            frase = frase.split(' ')
+
+            frase.forEach((palavra)=>{
+                if(palavra){
+                    this._tokens.push(palavra.toLowerCase())
+                }
+            })
+        }
+
+    }
+
+    /** Classe que trata tokens e gera resposta */
+    class TokenManipulator {
+
+        get negativo() {
+            return this._negativo;
+        }
+
+        set negativo(value) {
+            this._negativo = value;
+        }
+
+        get tomNegativo() {
+            return this._tomNegativo;
+        }
+
+        set tomNegativo(value) {
+            this._tomNegativo = value;
+        }
+
+        get tomPositivo() {
+            return this._tomPositivo;
+        }
+
+        set tomPositivo(value) {
+            this._tomPositivo = value;
+        }
+
+        get positivo() {
+            return this._positivo;
+        }
+
+        set positivo(value) {
+            this._positivo = value;
+        }
+
+        get numeroPalavras() {
+            return this._numeroPalavras;
+        }
+
+        set numeroPalavras(value) {
+            this._numeroPalavras = value;
+        }
+
+        get ofensivo() {
+            return this._ofensivo;
+        }
+
+        set ofensivo(value) {
+            this._ofensivo = value;
+        }
+
+        get tokens() {
+            return this._tokens;
+        }
+
+        set tokens(value) {
+            this._tokens = value;
+        }
+
+        get ansiedade() {
+            return this._ansiedade;
+        }
+
+        set ansiedade(value) {
+            this._ansiedade = value;
+        }
+
+        constructor(tokens) {
+            this._numeroPalavras = tokens.length
+            this._ofensivo = 0 // swear
+            this._ansiedade = 0 // anx
+            this._positivo = 0 // posemo
+            this._negativo = 0 // negemo
+            this._tomNegativo = 0.0
+            this._tomPositivo = 0.0
+            this._tokens = tokens;
+            this.run()
+        }
+
+        calcularTokensPalavra(){
+
+            this._tokens.forEach((palavra)=>{
+
+                const analise = busca_individual(palavra)
+
+                analise.forEach((value)=>{
+                    if(value === 'posemo') this._positivo++
+                    if(value === 'negemo') this._negativo++
+                    if(value === 'swear') this._ofensivo++
+                    if(value === 'anx') this._ansiedade++
+                })
+
+            })
+
+            this._tomPositivo = ((this._positivo * 100) / this._numeroPalavras).toFixed(2)
+            this._tomNegativo = ((this._negativo * 100) / this._numeroPalavras).toFixed(2)
+        }
+
+        exibirResposta(){
+            let reposta = `Saída: ${this._numeroPalavras} palavras. ${this._ofensivo} Palavra ofensiva, ${this._ansiedade} palavras de ansiedade, tom geral negativo: ${this._tomNegativo}% versus ${this._tomPositivo}% positivo;`
+            console.log(reposta)
+        }
+
+        run(){
+            this.calcularTokensPalavra()
+            this.exibirResposta()
+        }
+
+    }
+
+    /** Classe que trata tokens com caracteres especiais e gera resposta */
+    class SpecialTokenManipulator extends TokenManipulator{
+
+        constructor(tokens) {
+            super(tokens);
+        }
+
+        calcularTokensPalavra(){
+
+            this.tokens.forEach((palavra)=>{
+
+                const analise = busca_individual(this.tratar_caracteres_especiais(palavra))
+
+                analise.forEach((value)=>{
+                    if(value === 'posemo') this.positivo++
+                    if(value === 'negemo') this.negativo++
+                    if(value === 'swear') this.ofensivo++
+                    if(value === 'anx') this.ansiedade++
+                })
+
+            })
+
+            this.tomPositivo = ((this.positivo * 100) / this.numeroPalavras).toFixed(2)
+            this.tomNegativo = ((this.negativo * 100) / this.numeroPalavras).toFixed(2)
+        }
+
+        tratar_caracteres_especiais(palavra){
+            //return  palavra.normalize('NFD').replace(/([\u0300-\u036f]|[^0-9a-zA-Z])/g, '')
+            return  palavra.normalize('NFD').replace(/([\u0300-\u036f]|[^0-9a-zA-Z])/g, '')
+        }
+
+    }
+
+$('#textoTarefa').on('click', ()=>{
+
+
+
+        let text = `Angústia,
+De esperar por ti,
+Tormento,
+De esperar-te, amor
+
+Angústia
+De não beijar-te mais
+Tristeza
+De não escutar-te a voz
+
+Não poderei esquecer
+Nossas noites junto ao mar
+Contigo
+Se foi a ilusão
+Angústia
+Feriu meu coração
+
+ - Waldick soriano`
+
+        $('#texto').html(' ')
+
+        $('#texto').html(text)
+
+})
+
+
+
+
+    function run(){
+        let texto = $("[name='texto']").val()
+
+        $('#processando').modal('toggle')
+
+        setTimeout(()=>{
+            /** Chamada da Classe StringReader */
+            let stringReader = new StringReader(texto)
+
+            /** Chamada da Classe TokenManipulator */
+            //let tokenManipulator = new TokenManipulator(stringReader.tokens)
+
+            /** Chamada da Classe SpecialTokenManipulator */
+            let specialTokenManipulator = new SpecialTokenManipulator(stringReader.tokens)
+
+            $('#resposta').css('display', 'block')
+
+            $('#totalPalavras').html(specialTokenManipulator.numeroPalavras)
+            $('#ofensivo').html(specialTokenManipulator.ofensivo)
+            $('#ansidade').html(specialTokenManipulator.ansiedade)
+            $('#tomNegativo').html(specialTokenManipulator.tomNegativo + '%')
+            $('#tomPositivo').html(specialTokenManipulator.tomPositivo + '%')
+
+            $('#processando').modal('toggle')
+
+
+        }, 1000)
+
+    }
+
+</script>
+
+
+
+</body>
+</html>
