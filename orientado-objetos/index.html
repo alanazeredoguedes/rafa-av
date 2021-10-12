@@ -78,6 +78,9 @@
     </div>
 </div>
 
+<script src="../liwc/translate/dicionario_br.js"></script>
+<script src="../liwc/translate/referencia.js"></script>
+
 <!-- Optional JavaScript; choose one of the two! -->
 
 <!-- Option 1: Bootstrap Bundle with Popper -->
@@ -91,29 +94,6 @@
 
 <!--<script src="index.js"></script>-->
 <script>
-
-    let referenciaPath = document.URL+'../liwc/translate/referencia.json'
-    let idiomaPath = document.URL+'../liwc/translate/dicionario_br.json'
-
-    let referencia, idioma
-
-    $.ajax({
-        type: "GET",
-        url: referenciaPath,
-        async: false,
-        success : function(data) {
-            referencia = data
-        }
-    });
-
-    $.ajax({
-        type: "GET",
-        url: idiomaPath,
-        async: false,
-        success : function(data) {
-            idioma = data
-        }
-    });
 
     function busca_individual(busca){
 

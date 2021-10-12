@@ -38,7 +38,10 @@ module.exports = {
         const charAntes = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'Ç', 'á', 'à', 'ã', 'â', 'Á', 'À', 'Ã', 'Â', 'é', 'è', 'ê', 'É', 'È', 'Ê', 'í', 'ì', 'î', 'Í', 'Ì', 'Î', 'ó', 'ò', 'õ', 'ô', 'Ó', 'Ò', 'Õ', 'Ô', 'ú', 'ù', 'û', 'Ú', 'Ù', 'Û', '.', ',', ';', '!', '?']
         const charDepois = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'ç', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'e', 'e', 'e', 'e', 'e', 'e', 'i', 'i', 'i', 'i', 'i', 'i', 'o', 'o', 'o', 'o', 'o', 'o', 'o', 'o', 'u', 'u', 'u', 'u', 'u', 'u', '', '', '', '', '']
 
+        let novaPalavra = ''
+
         for (let i = 0; i < palavra.length; i++) {
+            let concatenou = false
 
             for (let j = 0; j < charAntes.length; j++) {
 
@@ -47,14 +50,16 @@ module.exports = {
                      * As strings em JS são imutáveis, o que significa que não se pode
                      * fazer a atribuição: palavra[i] = charDepois[j]
                      */
-                    palavra = palavra.replace(palavra[i], charDepois[j])
+                    novaPalavra += charDepois[j]
+                    concatenou = true
                 }
 
             }
 
+            if(!concatenou) novaPalavra += palavra[i]
         }
 
-        return palavra
+        return novaPalavra
 
     },
 
